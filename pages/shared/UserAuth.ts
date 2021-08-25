@@ -4,7 +4,7 @@ export class UserAuth {
   static setToken(user: any) {
     const str = JSON.stringify(user);
     localStorage.setItem(UserAuth.CookieName, str);
-    console.log("str: ", str, UserAuth.CookieName)
+    console.log("str: ", str, UserAuth.CookieName);
   }
 
   static getToken() {

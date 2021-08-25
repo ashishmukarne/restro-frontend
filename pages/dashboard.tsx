@@ -1,9 +1,12 @@
+import { redirect } from "next/dist/server/api-utils";
+import router from "next/router";
 import React, { useEffect, useState } from "react";
 import { Input, Button, Card, Col, Container, Row } from "reactstrap";
-import { LoginComponent } from "./components/LoginComponent";
 import { RestroComponent } from "./components/RestroComponent";
+import { redirectTo } from "./shared/redirect.service";
 import { RestroService } from "./shared/services/RestroService";
 import { ToastUtil } from "./shared/toast";
+import { UserAuth } from "./shared/UserAuth";
 const restros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const Dashboard = () => {
@@ -20,11 +23,18 @@ const Dashboard = () => {
         setRestros(success);
       })
       .catch((error: any) => {
+        if (error.response.status == 403) {
+          redirectTo("/", router);
+        }
         ToastUtil.error(error);
       });
   };
 
   useEffect(() => {
+    const token = UserAuth.getToken();
+    if (token == "") {
+      redirectTo("/", router);
+    }
     loadRestros("", 1);
   }, []);
 
@@ -35,7 +45,6 @@ const Dashboard = () => {
           <Col className="mt-5" xs={6} sm={6} md={6} lg={6} xl={6} xxl={6}>
             <Input
               onChange={(event: any) => {
-                console.log(event.currentTarget.value);
                 setSearchText(event.currentTarget.value);
                 loadRestros(event.currentTarget.value, sorting);
               }}
