@@ -11,8 +11,11 @@ const Dashboard = () => {
   const [searchText, setSearchText] = useState("");
   const [sorting, setSorting] = useState(1);
 
-  const loadRestros = () => {
-    RestroService.list(searchText, sorting)
+  const loadRestros = (text: string | undefined, sort: number | undefined) => {
+    RestroService.list(
+      text !== undefined ? text : searchText,
+      sort ? sort : sorting
+    )
       .then((success) => {
         setRestros(success);
       })
@@ -22,7 +25,7 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    loadRestros();
+    loadRestros("", 1);
   }, []);
 
   return (
@@ -33,9 +36,8 @@ const Dashboard = () => {
             <Input
               onChange={(event: any) => {
                 console.log(event.currentTarget.value);
-                loadRestros();
                 setSearchText(event.currentTarget.value);
-                setSearchText(event.currentTarget.value);
+                loadRestros(event.currentTarget.value, sorting);
               }}
             ></Input>
           </Col>
@@ -47,10 +49,10 @@ const Dashboard = () => {
               onClick={() => {
                 if (sorting == 1) {
                   setSorting(-1);
-                  loadRestros();
+                  loadRestros(searchText, -1);
                 } else {
                   setSorting(1);
-                  loadRestros();
+                  loadRestros(searchText, 1);
                 }
               }}
               className="float-right"
